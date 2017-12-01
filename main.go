@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net/http"
 	"strconv"
+	"fmt"
 )
 
 type Metrics struct {
@@ -29,8 +30,13 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	port := flag.String("port", "9999", "server port")
+	flag.Parse()
+	fmt.Printf("%s\n", *port)
+
 	mux := http.NewServeMux()
 	mux.HandleFunc("/v1/data", Handler)
 	srv := &http.Server{Addr: ":" + *port, Handler: mux}
-	srv.ListenAndServe()
+	if err := srv.ListenAndServe(); err != nil {
+		log.Fatalf("could not start server: %v", err)
+	}
 }
